@@ -51,6 +51,11 @@ public interface BeanDefinition extends AttributeAccessor, BeanMetadataElement {
 	/**
 	 * Scope identifier for the standard prototype scope: {@value}.
 	 * <p>Note that extended bean factories might support further scopes.
+	 *
+	 * 我们可以看到，默认只提供 singleton 和 prototype 两种，很多读者都知道还有 request,
+	 * session, globalSession, application, websocket 这几种，不过，它们属于基于 web
+	 * 的扩展。
+	 *
 	 * @see #setScope
 	 * @see ConfigurableBeanFactory#SCOPE_PROTOTYPE
 	 */
