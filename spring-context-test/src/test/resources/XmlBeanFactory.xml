@@ -10,6 +10,7 @@
 	<!-- 该 bean 必须实现 MethodReplacer 接口-->
 	<bean id="methodReplace" class="com.spring.test.bean.replace_method.MethodReplace"/>
 
+
 	<bean id="method" class="com.spring.test.bean.replace_method.Method">
 		<!-- 替换方法，有相应的 bean -->
 		<replaced-method name="display" replacer="methodReplace"/>

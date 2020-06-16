@@ -4,8 +4,10 @@
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
 	<bean id="book" class="com.spring.test.module.Book">
-		<property name="name">
-			<value>Java 入门到放弃</value>
-		</property>
+		<property name="name" value="Java 入门到放弃"/>
+	</bean>
+
+	<bean id="car" class="com.spring.test.factory.CarFactoryBean">
+		<property name="carInfo" value="宝马,500,500"/>
 	</bean>
 </beans>
