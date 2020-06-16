@@ -1,8 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "https://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
-<beans>
-	<bean id="message" class="com.spring.test.module.PersonalMessage">
 
+
+	<import resource="classpath:factory/spring-book.xml"/>
+
+	<!-- 该 bean 必须实现 MethodReplacer 接口-->
+	<bean id="methodReplace" class="com.spring.test.bean.replace_method.MethodReplace"/>
+
+	<bean id="method" class="com.spring.test.bean.replace_method.Method">
+		<!-- 替换方法，有相应的 bean -->
+		<replaced-method name="display" replacer="methodReplace"/>
 	</bean>
+
+	<bean id="bmw" class="com.spring.test.bean.look_up.Bmw">
+	</bean>
+
+	<bean id="display" class="com.spring.test.bean.look_up.Display">
+		<!-- 调用 display 的 getCar 方法-->
+		<lookup-method name="getCar" bean="bmw"/>
+	</bean>
+
+	<bean id="car" name="car1" class="com.spring.test.module.Car" scope="singleton" lazy-init="default"
+		  init-method="init" destroy-method="cleanUp">
+		<constructor-arg type="java.lang.String" name="brand" value="宝马"/>
+		<constructor-arg type="java.lang.Double" name="price" value="20"/>
+		<constructor-arg type="java.lang.String" name="description" value="宝马是一辆好车"/>
+		<!--meta 所声明的 key 并不会在 Bean 中体现，只是一个额外的声明，当我们需要使用里面的信息时，通过调用
+		BeanDefinition 的 #getAttribute(String name) 方法来获取-->
+		<meta key="meta-test" value="test"/>
+	</bean>
+
 </beans>

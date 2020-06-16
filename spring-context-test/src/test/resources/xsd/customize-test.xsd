@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+			xmlns="http://www.xwz.com/schema/user"
+			targetNamespace="http://www.xwz.com/schema/user"
+			elementFormDefault="qualified">
+
+	<!--在上述XSD文件中描述了一个新的targetNamespace，并在这个空间里定义了一个name为user和phone的element 。
+	user里面有三个attribute。主要是为了验证Spring配置文件中的自定义格式。再进一步解释，就是，Spring位置文件中
+	使用的user自定义标签中，属性只能是上面的三种，有其他的属性的话，就会报错-->
+	<xsd:element name="user">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="userName" type="xsd:string"/>
+			<xsd:attribute name="email" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+
+	<xsd:element name="phone">
+		<xsd:complexType>
+			<xsd:attribute name="id" type="xsd:string"/>
+			<xsd:attribute name="color" type="xsd:string"/>
+			<xsd:attribute name="size" type="xsd:int"/>
+			<xsd:attribute name="remark" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+
+</xsd:schema>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:myTag="http://www.xwz.com/schema/user"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+ 	                       http://www.xwz.com/schema/user http://www.xwz.com/schema/user.xsd">
+
+	<!--myTag: user 对应 handler 中 init 添加注册器的 key-->
+	<myTag:user id="user" email="xwz@163.com" userName="xwz"/>
+
+	<myTag:phone id="iphone" color="black" size="128" remark="iphone XR"/>
+</beans>
