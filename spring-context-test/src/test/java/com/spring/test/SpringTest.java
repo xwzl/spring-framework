@@ -4,7 +4,6 @@ import com.spring.test.bean.look_up.Display;
 import com.spring.test.module.Book;
 import com.spring.test.module.Car;
 import org.junit.Test;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -32,10 +31,10 @@ public class SpringTest {
 		Book bean = context.getBean(Book.class);
 		DefaultListableBeanFactory factory = (DefaultListableBeanFactory) context.getAutowireCapableBeanFactory();
 
-		BeanDefinition carBean = factory.getBeanDefinition("car");
-		Object attribute = carBean.getAttribute("meta-test");
-
-		System.out.println(attribute);
+		//BeanDefinition carBean = factory.getBeanDefinition("car");
+		//Object attribute = carBean.getAttribute("meta-test");
+		//
+		//System.out.println(attribute);
 		// 这句将输出: hello world
         System.out.println(car);
     }

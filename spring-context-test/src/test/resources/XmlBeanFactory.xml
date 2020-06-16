@@ -16,7 +16,7 @@
 		<replaced-method name="display" replacer="methodReplace"/>
 	</bean>
 
-	<bean id="bmw" class="com.spring.test.bean.look_up.Bmw">
+	<bean id="bmw" class="com.spring.test.bean.look_up.Bmw" scope="prototype">
 	</bean>
 
 	<bean id="display" class="com.spring.test.bean.look_up.Display">
@@ -24,14 +24,14 @@
 		<lookup-method name="getCar" bean="bmw"/>
 	</bean>
 
-	<bean id="car" name="car1" class="com.spring.test.module.Car" scope="singleton" lazy-init="default"
+	<!--<bean id="car" name="car1" class="com.spring.test.module.Car" scope="singleton" lazy-init="default"
 		  init-method="init" destroy-method="cleanUp">
 		<constructor-arg type="java.lang.String" name="brand" value="宝马"/>
 		<constructor-arg type="java.lang.Double" name="price" value="20"/>
 		<constructor-arg type="java.lang.String" name="description" value="宝马是一辆好车"/>
-		<!--meta 所声明的 key 并不会在 Bean 中体现，只是一个额外的声明，当我们需要使用里面的信息时，通过调用
-		BeanDefinition 的 #getAttribute(String name) 方法来获取-->
+		&lt;!&ndash;meta 所声明的 key 并不会在 Bean 中体现，只是一个额外的声明，当我们需要使用里面的信息时，通过调用
+		BeanDefinition 的 #getAttribute(String name) 方法来获取&ndash;&gt;
 		<meta key="meta-test" value="test"/>
-	</bean>
+	</bean>-->
 
 </beans>

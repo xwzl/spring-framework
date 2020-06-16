@@ -69,7 +69,7 @@ public class CarFactoryBean implements FactoryBean<Car> {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public String getCarInfo() {
