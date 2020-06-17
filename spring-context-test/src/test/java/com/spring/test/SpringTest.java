@@ -1,5 +1,6 @@
 package com.spring.test;
 
+import com.spring.test.autowire.Baby;
 import com.spring.test.bean.look_up.Display;
 import com.spring.test.module.Book;
 import com.spring.test.module.Car;
@@ -26,6 +27,10 @@ public class SpringTest {
 		// look-up
 		Display display = (Display) context.getBean("display");
 		display.display();
+
+
+		Baby baby = context.getBean(Baby.class);
+		System.out.println(baby);
 
 		Car car = context.getBean(Car.class);
 		Book bean = context.getBean(Book.class);
