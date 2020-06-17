@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+	<bean id="conversionService"
+		  class="org.springframework.context.support.ConversionServiceFactoryBean">
+		<property name="converters">
+			<set>
+				<ref bean="carConvert"/>
+			</set>
+		</property>
+	</bean>
+
+	<bean id="carConvert" class="com.spring.test.bean.convert.CarConvert"/>
+
+	<bean id="carFactory" class="com.spring.test.module.CarFactory">
+		<property name="car" value="bwm#22000#chenssy"/>
+	</bean>
+
+</beans>
