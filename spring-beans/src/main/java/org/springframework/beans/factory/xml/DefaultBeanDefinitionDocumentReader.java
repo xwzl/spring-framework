@@ -192,7 +192,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 						parseDefaultElement(ele, delegate);
 					} else {
 						// 如果该节点非默认命名空间，执行自定义解析
-						// 自定义注解方式：<tx:annotation-driven>
+						// 自定义注解方式：<tx:annotation-driven> 或者 aop
 						delegate.parseCustomElement(ele);
 					}
 				}
