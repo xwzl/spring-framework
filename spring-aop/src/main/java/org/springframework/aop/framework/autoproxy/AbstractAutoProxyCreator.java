@@ -16,19 +16,9 @@
 
 package org.springframework.aop.framework.autoproxy;
 
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.aopalliance.aop.Advice;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.TargetSource;
@@ -48,6 +38,10 @@ import org.springframework.beans.factory.config.SmartInstantiationAwareBeanPostP
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+
+import java.lang.reflect.Constructor;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * {@link org.springframework.beans.factory.config.BeanPostProcessor} implementation
@@ -278,8 +272,10 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	@Override
 	public Object postProcessAfterInitialization(@Nullable Object bean, String beanName) {
 		if (bean != null) {
+			//根据给定的bean的class和name构建出个key，格式：beanClassName_beanName
 			Object cacheKey = getCacheKey(bean.getClass(), beanName);
 			if (this.earlyProxyReferences.remove(cacheKey) != bean) {
+				//如果它适合被代理，则需要封装指定bean
 				return wrapIfNecessary(bean, beanName, cacheKey);
 			}
 		}
@@ -316,21 +312,27 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	 * @return a proxy wrapping the bean, or the raw bean instance as-is
 	 */
 	protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
+		// 如果已经处理过
 		if (StringUtils.hasLength(beanName) && this.targetSourcedBeans.contains(beanName)) {
 			return bean;
 		}
+		// 无需增强
 		if (Boolean.FALSE.equals(this.advisedBeans.get(cacheKey))) {
 			return bean;
 		}
+		// 给定的bean类是否代表一个基础设施类，基础设施类不应代理，或者配置了指定bean不需要自动代理
 		if (isInfrastructureClass(bean.getClass()) || shouldSkip(bean.getClass(), beanName)) {
 			this.advisedBeans.put(cacheKey, Boolean.FALSE);
 			return bean;
 		}
 
 		// Create proxy if we have advice.
+		// 如果存在增强方法则创建代理
 		Object[] specificInterceptors = getAdvicesAndAdvisorsForBean(bean.getClass(), beanName, null);
+		// 如果获取到了增强则需要针对增强创建代理
 		if (specificInterceptors != DO_NOT_PROXY) {
 			this.advisedBeans.put(cacheKey, Boolean.TRUE);
+			// 创建代理
 			Object proxy = createProxy(
 					bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean));
 			this.proxyTypes.put(cacheKey, proxy.getClass());

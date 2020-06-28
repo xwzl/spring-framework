@@ -16,15 +16,15 @@
 
 package org.springframework.aop.support.annotation;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-
 import org.springframework.aop.support.AopUtils;
 import org.springframework.aop.support.StaticMethodMatcher;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
  * Simple MethodMatcher that looks for a specific Java 5 annotation
@@ -83,6 +83,7 @@ public class AnnotationMethodMatcher extends StaticMethodMatcher {
 	}
 
 	private boolean matchesMethod(Method method) {
+		// 可以看出判断该Advisor是否使用于bean中的method，只需看method上是否有Advisor的注解
 		return (this.checkInherited ? AnnotatedElementUtils.hasAnnotation(method, this.annotationType) :
 				method.isAnnotationPresent(this.annotationType));
 	}

@@ -16,14 +16,8 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.Serializable;
-import java.lang.reflect.Method;
-
 import org.aopalliance.aop.Advice;
 import org.aspectj.lang.reflect.PerClauseKind;
-
 import org.springframework.aop.Pointcut;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.aspectj.AspectJPrecedenceInformation;
@@ -32,6 +26,11 @@ import org.springframework.aop.aspectj.annotation.AbstractAspectJAdvisorFactory.
 import org.springframework.aop.support.DynamicMethodMatcherPointcut;
 import org.springframework.aop.support.Pointcuts;
 import org.springframework.lang.Nullable;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+import java.lang.reflect.Method;
 
 /**
  * Internal implementation of AspectJPointcutAdvisor.
@@ -80,6 +79,13 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 	private Boolean isAfterAdvice;
 
 
+	/**
+	 * 通过对上面构造函数的分析，发现封装过程只是简单地将信息封装在类的实例中，所有的额信息单纯地复制。
+	 *
+	 * 在实例初始化的过程中还完成了对于增强器的初始化。因为不同的增强所体现的逻辑是不同的，比如@Before（“test（）”）与
+	 * After（“test（）”）标签的不同就是增强器增强的位置不同，所以就需要不同的增强器来完成不同的逻辑，而根据注解中的信
+	 * 息初始化对应的额增强器就是在instantiateAdvice函数中实现的，继续跟踪代码：
+	 */
 	public InstantiationModelAwarePointcutAdvisorImpl(AspectJExpressionPointcut declaredPointcut,
 			Method aspectJAdviceMethod, AspectJAdvisorFactory aspectJAdvisorFactory,
 			MetadataAwareAspectInstanceFactory aspectInstanceFactory, int declarationOrder, String aspectName) {
@@ -110,6 +116,7 @@ final class InstantiationModelAwarePointcutAdvisorImpl
 			// A singleton aspect.
 			this.pointcut = this.declaredPointcut;
 			this.lazy = false;
+			// 初始化Advice
 			this.instantiatedAdvice = instantiateAdvice(this.declaredPointcut);
 		}
 	}

@@ -16,16 +16,16 @@
 
 package org.springframework.aop.aspectj.annotation;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.autoproxy.AspectJAwareAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.ListableBeanFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.lang.Nullable;
 import org.springframework.util.Assert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * {@link AspectJAwareAdvisorAutoProxyCreator} subclass that processes all AspectJ
@@ -43,8 +43,8 @@ import org.springframework.util.Assert;
  *
  * @author Rod Johnson
  * @author Juergen Hoeller
- * @since 2.0
  * @see org.springframework.aop.aspectj.annotation.AspectJAdvisorFactory
+ * @since 2.0
  */
 @SuppressWarnings("serial")
 public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorAutoProxyCreator {
@@ -86,12 +86,21 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	}
 
 
+	/**
+	 * AnnotationAwareAspectJAutoProxyCreator间接继承了AbstractAdvisorAutoProxyCreator，在实现获取
+	 * 增强的方法中除了保留父类的获取配置文件中定义的增强外，同时添加了获取Bean的注解增强的功能，那么其实现
+	 * 正是由this.aspectJAdvisorsBuilder.buildAspectJAdvisors()来实现的。
+	 * <p>
+	 * 在真正研究代码之前读者可以尝试着自己去想象一下解析思路，看看自己的实现与Spring是否有差别呢？
+	 */
 	@Override
 	protected List<Advisor> findCandidateAdvisors() {
 		// Add all the Spring advisors found according to superclass rules.
+		// 当使用注解方式配置AOP的时候并不是丢弃了对XML配置的支持，在这里调用父类方法加载配置文件中的AOP声明
 		List<Advisor> advisors = super.findCandidateAdvisors();
 		// Build Advisors for all AspectJ aspects in the bean factory.
 		if (this.aspectJAdvisorsBuilder != null) {
+			// 注解方式获取所有的增强方法
 			advisors.addAll(this.aspectJAdvisorsBuilder.buildAspectJAdvisors());
 		}
 		return advisors;
@@ -120,8 +129,7 @@ public class AnnotationAwareAspectJAutoProxyCreator extends AspectJAwareAdvisorA
 	protected boolean isEligibleAspectBean(String beanName) {
 		if (this.includePatterns == null) {
 			return true;
-		}
-		else {
+		} else {
 			for (Pattern pattern : this.includePatterns) {
 				if (pattern.matcher(beanName).matches()) {
 					return true;
