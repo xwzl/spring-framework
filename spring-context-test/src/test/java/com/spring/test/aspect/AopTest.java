@@ -2,6 +2,7 @@ package com.spring.test.aspect;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.config.AopNamespaceHandler;
+import org.springframework.aop.framework.autoproxy.AbstractAutoProxyCreator;
 import org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
@@ -19,9 +20,7 @@ public class AopTest {
 	 *
 	 * {@link AbstractAutowireCapableBeanFactory#initializeBean(String, Object, RootBeanDefinition)}
 	 *
-	 * applyBeanPostProcessorsBeforeInitialization
-	 * applyBeanPostProcessorsAfterInitialization
-
+	 * {@link AbstractAutoProxyCreator#postProcessAfterInitialization}
 	 *
 	 */
 	@Test

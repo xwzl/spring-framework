@@ -34,8 +34,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * Spring Advisors based on them, for use with auto-proxying.
  *
  * @author Juergen Hoeller
- * @since 2.0.2
  * @see AnnotationAwareAspectJAutoProxyCreator
+ * @since 2.0.2
  */
 public class BeanFactoryAspectJAdvisorsBuilder {
 
@@ -53,6 +53,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 	/**
 	 * Create a new BeanFactoryAspectJAdvisorsBuilder for the given BeanFactory.
+	 *
 	 * @param beanFactory the ListableBeanFactory to scan
 	 */
 	public BeanFactoryAspectJAdvisorsBuilder(ListableBeanFactory beanFactory) {
@@ -61,7 +62,8 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 	/**
 	 * Create a new BeanFactoryAspectJAdvisorsBuilder for the given BeanFactory.
-	 * @param beanFactory the ListableBeanFactory to scan
+	 *
+	 * @param beanFactory    the ListableBeanFactory to scan
 	 * @param advisorFactory the AspectJAdvisorFactory to build each Advisor with
 	 */
 	public BeanFactoryAspectJAdvisorsBuilder(ListableBeanFactory beanFactory, AspectJAdvisorFactory advisorFactory) {
@@ -118,18 +120,16 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 							if (amd.getAjType().getPerClause().getKind() == PerClauseKind.SINGLETON) {
 								MetadataAwareAspectInstanceFactory factory =
 										new BeanFactoryAspectInstanceFactory(this.beanFactory, beanName);
-								// 解析标记Aspect注解中的增强方法
+								// 解析标记 Aspect 注解中的增强方法，封装需要增强类以及方法对象信息初始化
 								List<Advisor> classAdvisors = this.advisorFactory.getAdvisors(factory);
 								if (this.beanFactory.isSingleton(beanName)) {
 									// 将增强器存入缓存中，下次可以直接取
 									this.advisorsCache.put(beanName, classAdvisors);
-								}
-								else {
+								} else {
 									this.aspectFactoryCache.put(beanName, factory);
 								}
 								advisors.addAll(classAdvisors);
-							}
-							else {
+							} else {
 								// Per target or per this.
 								if (this.beanFactory.isSingleton(beanName)) {
 									throw new IllegalArgumentException("Bean with name '" + beanName +
@@ -157,8 +157,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 			List<Advisor> cachedAdvisors = this.advisorsCache.get(aspectName);
 			if (cachedAdvisors != null) {
 				advisors.addAll(cachedAdvisors);
-			}
-			else {
+			} else {
 				MetadataAwareAspectInstanceFactory factory = this.aspectFactoryCache.get(aspectName);
 				advisors.addAll(this.advisorFactory.getAdvisors(factory));
 			}
@@ -168,6 +167,7 @@ public class BeanFactoryAspectJAdvisorsBuilder {
 
 	/**
 	 * Return whether the aspect bean with the given name is eligible.
+	 *
 	 * @param beanName the name of the aspect bean
 	 * @return whether the bean is eligible
 	 */
