@@ -220,6 +220,8 @@ public abstract class AopUtils {
 			return false;
 		}
 
+		// 此时的pc表示TransactionAttributeSourcePointcut
+		// pc.getMethodMatcher()返回的正是自身(this)
 		MethodMatcher methodMatcher = pc.getMethodMatcher();
 		if (methodMatcher == MethodMatcher.TRUE) {
 			// No need to iterate the methods if we're matching any method anyway...
@@ -235,8 +237,8 @@ public abstract class AopUtils {
 		if (!Proxy.isProxyClass(targetClass)) {
 			classes.add(ClassUtils.getUserClass(targetClass));
 		}
+		//获取对应类的所有接口
 		classes.addAll(ClassUtils.getAllInterfacesForClassAsSet(targetClass));
-
 		for (Class<?> clazz : classes) {
 			// 反射获取类中所有的方法
 			Method[] methods = ReflectionUtils.getAllDeclaredMethods(clazz);
@@ -310,6 +312,7 @@ public abstract class AopUtils {
 		}
 		boolean hasIntroductions = !eligibleAdvisors.isEmpty();
 		for (Advisor candidate : candidateAdvisors) {
+			// 引介增强已经处理
 			if (candidate instanceof IntroductionAdvisor) {
 				// already processed
 				continue;

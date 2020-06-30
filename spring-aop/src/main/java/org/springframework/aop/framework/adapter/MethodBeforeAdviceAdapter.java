@@ -16,13 +16,12 @@
 
 package org.springframework.aop.framework.adapter;
 
-import java.io.Serializable;
-
 import org.aopalliance.aop.Advice;
 import org.aopalliance.intercept.MethodInterceptor;
-
 import org.springframework.aop.Advisor;
 import org.springframework.aop.MethodBeforeAdvice;
+
+import java.io.Serializable;
 
 /**
  * Adapter to enable {@link org.springframework.aop.MethodBeforeAdvice}
@@ -36,12 +35,14 @@ class MethodBeforeAdviceAdapter implements AdvisorAdapter, Serializable {
 
 	@Override
 	public boolean supportsAdvice(Advice advice) {
+		//判断是否是MethodBeforeAdvice类型的advice
 		return (advice instanceof MethodBeforeAdvice);
 	}
 
 	@Override
 	public MethodInterceptor getInterceptor(Advisor advisor) {
 		MethodBeforeAdvice advice = (MethodBeforeAdvice) advisor.getAdvice();
+		//将advice封装成MethodBeforeAdviceInterceptor
 		return new MethodBeforeAdviceInterceptor(advice);
 	}
 

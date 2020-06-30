@@ -16,23 +16,18 @@
 
 package org.springframework.aop.framework;
 
+import org.aopalliance.intercept.Interceptor;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.springframework.aop.*;
+import org.springframework.aop.framework.adapter.AdvisorAdapterRegistry;
+import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
+import org.springframework.lang.Nullable;
+
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.aopalliance.intercept.Interceptor;
-import org.aopalliance.intercept.MethodInterceptor;
-
-import org.springframework.aop.Advisor;
-import org.springframework.aop.IntroductionAdvisor;
-import org.springframework.aop.IntroductionAwareMethodMatcher;
-import org.springframework.aop.MethodMatcher;
-import org.springframework.aop.PointcutAdvisor;
-import org.springframework.aop.framework.adapter.AdvisorAdapterRegistry;
-import org.springframework.aop.framework.adapter.GlobalAdvisorAdapterRegistry;
-import org.springframework.lang.Nullable;
 
 /**
  * A simple but definitive way of working out an advice chain for a Method,
@@ -58,7 +53,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
-
+		// 获取bean中的所有增强器
 		for (Advisor advisor : advisors) {
 			if (advisor instanceof PointcutAdvisor) {
 				// Add it conditionally.
@@ -73,9 +68,12 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 						match = ((IntroductionAwareMethodMatcher) mm).matches(method, actualClass, hasIntroductions);
 					}
 					else {
+						//根据增强器中的Pointcut判断增强器是否能匹配当前类中的method
+						//我们要知道目标Bean中并不是所有的方法都需要增强，也有一些普通方法
 						match = mm.matches(method, actualClass);
 					}
 					if (match) {
+						//如果能匹配，就将advisor封装成MethodInterceptor加入到interceptorList中
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
 							// Creating a new object instance in the getInterceptors() method

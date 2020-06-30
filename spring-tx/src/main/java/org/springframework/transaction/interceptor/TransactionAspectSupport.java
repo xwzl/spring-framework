@@ -16,18 +16,11 @@
 
 package org.springframework.transaction.interceptor;
 
-import java.lang.reflect.Method;
-import java.util.Properties;
-import java.util.concurrent.ConcurrentMap;
-
 import io.vavr.control.Try;
 import kotlin.reflect.KFunction;
 import kotlin.reflect.jvm.ReflectJvmMapping;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,20 +30,19 @@ import org.springframework.core.NamedThreadLocal;
 import org.springframework.core.ReactiveAdapter;
 import org.springframework.core.ReactiveAdapterRegistry;
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.NoTransactionException;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.ReactiveTransaction;
-import org.springframework.transaction.ReactiveTransactionManager;
-import org.springframework.transaction.TransactionManager;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.TransactionUsageException;
+import org.springframework.transaction.*;
 import org.springframework.transaction.reactive.TransactionContextManager;
 import org.springframework.transaction.support.CallbackPreferringPlatformTransactionManager;
 import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.ConcurrentReferenceHashMap;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.lang.reflect.Method;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * Base class for transactional aspects, such as the {@link TransactionInterceptor}
@@ -332,7 +324,9 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 		// If the transaction attribute is null, the method is non-transactional.
 		TransactionAttributeSource tas = getTransactionAttributeSource();
+		// 获取对应事务属性
 		final TransactionAttribute txAttr = (tas != null ? tas.getTransactionAttribute(method, targetClass) : null);
+		// 获取beanFactory中的transactionManager
 		final TransactionManager tm = determineTransactionManager(txAttr);
 
 		if (this.reactiveAdapterRegistry != null && tm instanceof ReactiveTransactionManager) {
@@ -356,22 +350,30 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		PlatformTransactionManager ptm = asPlatformTransactionManager(tm);
 		final String joinpointIdentification = methodIdentification(method, targetClass, txAttr);
 
+		// 声明式事务处理
 		if (txAttr == null || !(ptm instanceof CallbackPreferringPlatformTransactionManager)) {
 			// Standard transaction demarcation with getTransaction and commit/rollback calls.
+			// 创建TransactionInfo
 			TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
 
 			Object retVal;
 			try {
 				// This is an around advice: Invoke the next interceptor in the chain.
 				// This will normally result in a target object being invoked.
+				// 执行原方法
+				// 继续调用方法拦截器链,这里一般将会调用目标类的方法,如:AccountServiceImpl.save方法
 				retVal = invocation.proceedWithInvocation();
 			}
 			catch (Throwable ex) {
 				// target invocation exception
+				// 异常回滚
 				completeTransactionAfterThrowing(txInfo, ex);
+				// 手动向上抛出异常，则下面的提交事务不会执行
+				// 如果子事务出异常，则外层事务代码需catch住子事务代码，不然外层事务也会回滚
 				throw ex;
 			}
 			finally {
+				// 消除信息
 				cleanupTransactionInfo(txInfo);
 			}
 
@@ -382,7 +384,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 					retVal = VavrDelegate.evaluateTryFailure(retVal, txAttr, status);
 				}
 			}
-
+			// 提交事务
 			commitTransactionAfterReturning(txInfo);
 			return retVal;
 		}
@@ -392,6 +394,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 
 			// It's a CallbackPreferringPlatformTransactionManager: pass a TransactionCallback in.
 			try {
+				// 编程式事务处理
 				Object result = ((CallbackPreferringPlatformTransactionManager) ptm).execute(txAttr, status -> {
 					TransactionInfo txInfo = prepareTransactionInfo(ptm, txAttr, joinpointIdentification, status);
 					try {
@@ -558,6 +561,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 			@Nullable TransactionAttribute txAttr, final String joinpointIdentification) {
 
 		// If no name specified, apply method identification as transaction name.
+		// 如果没有名称指定则使用方法唯一标识，并使用DelegatingTransactionAttribute封装txAttr
 		if (txAttr != null && txAttr.getName() == null) {
 			txAttr = new DelegatingTransactionAttribute(txAttr) {
 				@Override
@@ -570,6 +574,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 		TransactionStatus status = null;
 		if (txAttr != null) {
 			if (tm != null) {
+				// 获取TransactionStatus
 				status = tm.getTransaction(txAttr);
 			}
 			else {
@@ -579,6 +584,7 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
 				}
 			}
 		}
+		// 根据指定的属性与status准备一个TransactionInfo
 		return prepareTransactionInfo(tm, txAttr, joinpointIdentification, status);
 	}
 
