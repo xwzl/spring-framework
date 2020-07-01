@@ -24,6 +24,8 @@ public class SpringTest {
         // 从 context 中取出我们的 Bean，而不是用 new MessageServiceImpl() 这种方式
 		Object car1 = context.getBean("car");
 
+		context.getBean("student");
+
 		// look-up
 		Display display = (Display) context.getBean("display");
 		display.display();

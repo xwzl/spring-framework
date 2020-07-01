@@ -16,21 +16,15 @@
 
 package org.springframework.jdbc.datasource;
 
-import java.sql.SQLException;
-import java.sql.Savepoint;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.lang.Nullable;
-import org.springframework.transaction.CannotCreateTransactionException;
-import org.springframework.transaction.NestedTransactionNotSupportedException;
-import org.springframework.transaction.SavepointManager;
-import org.springframework.transaction.TransactionException;
-import org.springframework.transaction.TransactionSystemException;
-import org.springframework.transaction.TransactionUsageException;
+import org.springframework.transaction.*;
 import org.springframework.transaction.support.SmartTransactionObject;
 import org.springframework.util.Assert;
+
+import java.sql.SQLException;
+import java.sql.Savepoint;
 
 /**
  * Convenient base class for JDBC-aware transaction objects. Can contain a
@@ -172,6 +166,8 @@ public abstract class JdbcTransactionObjectSupport implements SavepointManager, 
 	public void rollbackToSavepoint(Object savepoint) throws TransactionException {
 		ConnectionHolder conHolder = getConnectionHolderForSavepoint();
 		try {
+			// 这里使用的是JDBC的方式进行数据库连接，那么getSavepointManager()函数返回的是JdbcTransactionObjectSupport，
+			// 也就是说上面函数会调用JdbcTransactionObjectSupport 中的 rollbackToSavepoint 方法。
 			conHolder.getConnection().rollback((Savepoint) savepoint);
 			conHolder.resetRollbackOnly();
 		}

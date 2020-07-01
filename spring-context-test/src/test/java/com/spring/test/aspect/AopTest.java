@@ -21,6 +21,7 @@ public class AopTest {
 	 * {@link AbstractAutowireCapableBeanFactory#initializeBean(String, Object, RootBeanDefinition)}
 	 *
 	 * {@link AbstractAutoProxyCreator#postProcessAfterInitialization}
+	 * {@link org.springframework.transaction.config.AnnotationDrivenBeanDefinitionParser.AopAutoProxyConfigurer#configureAutoProxyCreator}
 	 *
 	 */
 	@Test

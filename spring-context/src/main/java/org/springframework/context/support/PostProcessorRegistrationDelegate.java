@@ -63,6 +63,7 @@ final class PostProcessorRegistrationDelegate {
 				// 如果是BeanDefinitionRegistryPostProcessor的实例话,则调用其postProcessBeanDefinitionRegistry方法,对bean进行注册操作
 				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
 					// 如果是BeanDefinitionRegistryPostProcessor类型,则直接调用其postProcessBeanDefinitionRegistry
+					// ConfigurationClassPostProcessor 对应 @Configure
 					BeanDefinitionRegistryPostProcessor registryProcessor =
 							(BeanDefinitionRegistryPostProcessor) postProcessor;
 					registryProcessor.postProcessBeanDefinitionRegistry(registry);

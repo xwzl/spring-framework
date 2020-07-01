@@ -143,6 +143,8 @@ public abstract class AbstractTransactionStatus implements TransactionStatus {
 	/**
 	 * Roll back to the savepoint that is held for the transaction
 	 * and release the savepoint right afterwards.
+	 *
+	 * 根据保存点回滚的实现方式其实是根据底层的数据库连接进行的。回滚到保存点之后，也要释放掉当前的保存点.
 	 */
 	public void rollbackToHeldSavepoint() throws TransactionException {
 		Object savepoint = getSavepoint();
